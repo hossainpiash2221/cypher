@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Cipher Encryption Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; text-align: center; padding: 20px; }
+        .cipher-option { margin: 15px; }
+        #output { margin-top: 20px; font-weight: bold; }
+        #keyInputs { margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Encrypt and Decrypt Messages</h1>
+
+        <!-- Cipher Selection -->
+        <label for="cipher">Select Cipher:</label>
+        <select id="cipher" onchange="toggleKeyInput()">
+            <option value="caesar">Caesar Cipher</option>
+            <option value="vigenere">Vigenère Cipher</option>
+            <option value="atbash">Atbash Cipher</option>
+            <option value="playfair">Playfair Cipher</option>
+            <option value="railfence">Rail Fence Cipher</option>
+            <option value="double-columnar">Double Columnar Transposition Cipher</option>
+        </select>
+        
+        <!-- Key Inputs (will vary by cipher type) -->
+        <div id="keyInputs">
+            <label id="keyLabel" for="key">Key:</label>
+            <input type="text" id="key" placeholder="e.g., 3 or keyword" />
+            <small id="keyHint" style="display:block; margin-top:5px;"></small>
+        </div>
+        
+        <!-- Plaintext Input -->
+        <div class="cipher-option">
+            <textarea id="message" placeholder="Enter your message here..."></textarea>
+        </div>
+        
+        <!-- Encrypt and Decrypt Buttons -->
+        <div class="cipher-option">
+            <button onclick="encryptMessage()">Encrypt</button>
+            <button onclick="decryptMessage()">Decrypt</button>
+        </div>
+
+        <!-- Output -->
+        <div id="output">Output: <span id="ciphertext"></span></div>
+    </div>
+
+    <script src="cipher.js"></script>
+    <script>
+        // Toggle Key Input based on selected cipher
+        function toggleKeyInput() {
+            const cipher = document.getElementById('cipher').value;
+            const keyLabel = document.getElementById('keyLabel');
+            const keyInput = document.getElementById('key');
+            const keyHint = document.getElementById('keyHint');
+
+            // Default settings
+            keyInput.style.display = 'block';
+            keyLabel.style.display = 'block';
+            keyLabel.textContent = "Key:";
+            keyHint.style.display = 'block';
+
+            // Customize based on cipher type
+            switch (cipher) {
+                case 'caesar':
+                    keyLabel.textContent = "Key (Number):";
+                    keyInput.placeholder = "e.g., 3";
+                    keyHint.textContent = "Enter a number as the shift value.";
+                    break;
+                case 'vigenere':
+                    keyLabel.textContent = "Key (Text):";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "Enter a word or phrase as the keyword.";
+                    break;
+                case 'atbash':
+                    keyInput.style.display = 'none';
+                    keyLabel.style.display = 'none';
+                    keyHint.style.display = 'none';
+                    break;
+                case 'playfair':
+                    keyLabel.textContent = "Key (Text):";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "Enter a word or phrase as the keyword. Letters 'I' and 'J' are combined.";
+                    break;
+                case 'railfence':
+                    keyLabel.textContent = "Key (Number):";
+                    keyInput.placeholder = "e.g., 3";
+                    keyHint.textContent = "Enter the number of rails (rows) for the cipher.";
+                    break;
+                case 'double-columnar':
+                    keyLabel.textContent = "Key (Text):";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "Enter a word or phrase as the keyword for columnar transposition.";
+                    break;
+            }
+        }
+
+        // Initialize the page with the first cipher's key input settings
+        toggleKeyInput();
+    </script>
+</body>
+</html>
