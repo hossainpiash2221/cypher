@@ -25,6 +25,9 @@
             <option value="playfair">Playfair Cipher</option>
             <option value="railfence">Rail Fence Cipher</option>
             <option value="double-columnar">Double Columnar Transposition Cipher</option>
+            <option value="triple-columnar">Triple Columnar Transposition Cipher</option>
+            <option value="rsaModification">RSA Modification</option>
+            <option value="AffineModification">Affine Modification</option>
         </select>
         
         <!-- Key Inputs (will vary by cipher type) -->
@@ -32,6 +35,21 @@
             <label id="keyLabel" for="key">Key:</label>
             <input type="text" id="key" placeholder="e.g., 3 or keyword" />
             <small id="keyHint" style="display:block; margin-top:5px;"></small>
+        </div>
+
+        <div id="key1-section">
+            <label for="key1">Key 1:</label>
+            <input type="text" id="key1" placeholder="Enter first key">
+        </div>
+    
+        <div id="key2-section" style="display: none;">
+            <label for="key2">Key 2:</label>
+            <input type="text" id="key2" placeholder="Enter second key">
+        </div>
+    
+        <div id="key3-section" style="display: none;">
+            <label for="key3">Key 3:</label>
+            <input type="text" id="key3" placeholder="Enter third key">
         </div>
         
         <!-- Plaintext Input -->
@@ -50,6 +68,7 @@
     </div>
 
     <script src="cipher.js"></script>
+    <!-- <script src="rsaModify.js"></script> -->
     <script>
         // Toggle Key Input based on selected cipher
         function toggleKeyInput() {
@@ -58,11 +77,17 @@
             const keyInput = document.getElementById('key');
             const keyHint = document.getElementById('keyHint');
 
+            const key1Section = document.getElementById('key1-section');
+            const key2Section = document.getElementById('key2-section');
+            const key3Section = document.getElementById('key3-section');
+
+            
             // Default settings
             keyInput.style.display = 'block';
             keyLabel.style.display = 'block';
             keyLabel.textContent = "Key:";
             keyHint.style.display = 'block';
+            key1Section.style.display = 'none';
 
             // Customize based on cipher type
             switch (cipher) {
@@ -96,6 +121,23 @@
                     keyInput.placeholder = "e.g., keyword";
                     keyHint.textContent = "Enter a word or phrase as the keyword for columnar transposition.";
                     break;
+                
+                case 'triple-columnar':
+                key1Section.style.display = 'block';
+                key2Section.style.display = 'block';
+                key3Section.style.display = 'block';
+                keyInput.style.display = 'none';
+                break;
+
+                case 'rsaModification':
+                keyInput.style.display = 'none';
+                    keyLabel.style.display = 'none';
+                    keyHint.style.display = 'none';
+                    break;
+
+                case 'AffineModification':
+
+                break;
             }
         }
 
