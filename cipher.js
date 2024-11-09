@@ -414,7 +414,7 @@ function decodeMessage(encryptedArray, privateKey) {
 // }
 
 function modificationRsa(message, decrypt = false) {
-    console.log("1");
+    // console.log("1");
     const { publicKey, privateKey } = generateKeys();
     const emsg = encodeMessage(message, publicKey);
     if (!decrypt) {
@@ -452,7 +452,7 @@ function encryptModifiedAffine(message, a, b) {
         let encryptedChar = (a * x + b) % m;
         encryptedText += charset[encryptedChar];
     }
-    console.log(encryptedText)
+    // console.log(encryptedText)
     return encryptedText;
 }
 
@@ -481,6 +481,75 @@ function modifiedAffine(message, decrypt = false) {
 }
 
 
+
+// modified ceaser and vegenere 
+
+console.log("");
+// Define the Vigenère table with numbers and alphabets
+const vigenereTable = (() => {
+    const table = [];
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    
+    for (let i = 0; i < chars.length; i++) {
+        table[i] = [];
+        for (let j = 0; j < chars.length; j++) {
+            const index = (i + j) % chars.length;
+            table[i][j] = chars[index];
+        }
+    }
+    return table;
+})();
+
+// Helper function to get index in Vigenère table
+const getIndex = (char) => {
+    if (/[A-Z]/.test(char)) return char.charCodeAt(0) - 'A'.charCodeAt(0);
+    return 26 + parseInt(char, 10);  // Map digits 0-9 to indices 26-35
+};
+
+// Encryption function
+function encryptVigenereCaesar(plainText, key, uKey) {
+    console.log(uKey);
+            console.log(key);
+            console.log(plainText)
+    let cipherText = '';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    for (let i = 0; i < plainText.length; i++) {
+        const pIndex = getIndex(plainText[i]);
+        const kIndex = getIndex(key[i % key.length]);
+        let cIndex = (pIndex + kIndex + uKey) % chars.length;
+        
+        cipherText += chars[cIndex];
+    }
+    return cipherText;
+}
+
+// Decryption function
+function decryptVigenereCaesar(cipherText, key, uKey) {
+    let plainText = '';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ';
+
+    for (let i = 0; i < cipherText.length; i++) {
+        const cIndex = getIndex(cipherText[i]);
+        const kIndex = getIndex(key[i % key.length]);
+        let pIndex = (cIndex - uKey - kIndex + chars.length) % chars.length;
+        
+        plainText += chars[pIndex];
+    }
+    return plainText;
+}
+
+function combinedCeaserAndVeginer(message,key,uKey, decrypt = false) {
+    const emsg = encryptVigenereCaesar(message, key, uKey);
+    // console.log(key)
+    if (!decrypt) {
+        return encryptVigenereCaesar(message, key, uKey);
+    } else {
+        return decryptVigenereCaesar(message, key, uKey);
+    }
+
+}
+
 function processMessage(decrypt) {
     const cipher = document.getElementById('cipher').value;
     const key = document.getElementById('key').value;
@@ -488,6 +557,7 @@ function processMessage(decrypt) {
     const key2 = document.getElementById('key2').value;
     const key3 = document.getElementById('key3').value;
     const message = document.getElementById('message').value;
+    const uKey = document.getElementById('uKey').value;
     let result = '';
 
     switch (cipher) {
@@ -522,6 +592,12 @@ function processMessage(decrypt) {
 
         case 'AffineModification':
             result = modifiedAffine(message,decrypt);
+            break;
+
+        case 'modifiedceaser_veginere':
+            result = combinedCeaserAndVeginer(message,key,uKey,decrypt)
+
+            
             break;
 
     }

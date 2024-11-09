@@ -28,6 +28,7 @@
             <option value="triple-columnar">Triple Columnar Transposition Cipher</option>
             <option value="rsaModification">RSA Modification</option>
             <option value="AffineModification">Affine Modification</option>
+            <option value="modifiedceaser_veginere">Ceaser and veginere combined Modification</option>
         </select>
         
         <!-- Key Inputs (will vary by cipher type) -->
@@ -50,6 +51,11 @@
         <div id="key3-section" style="display: none;">
             <label for="key3">Key 3:</label>
             <input type="text" id="key3" placeholder="Enter third key">
+        </div>
+        
+        <div id="uKeyCV" style="display: none;">
+            <label for="uKey">uKey:</label>
+            <input type="text" id="uKey" placeholder="Enter integer key">
         </div>
         
         <!-- Plaintext Input -->
@@ -80,6 +86,7 @@
             const key1Section = document.getElementById('key1-section');
             const key2Section = document.getElementById('key2-section');
             const key3Section = document.getElementById('key3-section');
+            const uKey = document.getElementById('uKeyCV');
 
             
             // Default settings
@@ -88,6 +95,7 @@
             keyLabel.textContent = "Key:";
             keyHint.style.display = 'block';
             key1Section.style.display = 'none';
+            uKey.style.display='none'
 
             // Customize based on cipher type
             switch (cipher) {
@@ -137,6 +145,14 @@
 
                 case 'AffineModification':
 
+                break;
+
+                case 'modifiedceaser_veginere':
+                keyLabel.textContent = "Key (Text):";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "Enter a word or phrase as the keyword.";
+                    uKey.style.display='block';
+                    
                 break;
             }
         }
