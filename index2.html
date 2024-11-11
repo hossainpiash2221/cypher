@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Cipher Encryption Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; text-align: center; padding: 20px; }
+        .cipher-option { margin: 0px; }
+        #output { margin-top: 0px; font-weight: bold; }
+        #keyInputs { margin: 0px 0; }
+        label,p{
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div>
+        <div class="hero bg-gray-950 min-h-screen">
+            <div class="hero-content flex-col lg:flex-row-reverse">
+              <img
+                src="hack.jpg"
+                class="max-w-sm rounded-lg shadow-2xl " />
+              <div>
+                <h1 class="text-5xl font-bold mb-5 text-white">Encrypt and Decrypt Messages</h1>
+                <div class="   ">
+                  
+                    <!-- Cipher Selection -->
+                    <label for="cipher">Select Cipher:</label>
+                    <select id="cipher" onchange="toggleKeyInput()" class="select select-info w-full mb-5">
+                        <option disabled selected>Select Cipher</option>
+                        <option value="caesar">Caesar Cipher</option>
+                        <option value="vigenere">Vigenère Cipher</option>
+                        <option value="atbash">Atbash Cipher</option>
+                        <option value="playfair">Playfair Cipher</option>
+                        <option value="railfence">Rail Fence Cipher</option>
+                        <option value="double-columnar">Double Columnar Transposition Cipher</option>
+                        <option value="triple-columnar">Triple Columnar Transposition Cipher</option>
+                        <option value="rsaModification">RSA Modification</option>
+                        <option value="AffineModification">Affine Modification</option>
+                        <option value="modifiedceaser_veginere">Ceaser and veginere combined Modification</option>
+                        <option value="Modified-AutoKey">Modified Autokey</option>
+                    </select>
+            
+                    <!-- Key Inputs (will vary by cipher type) -->
+                    <div id="keyInputs" class="mb-5">
+                        <label id="keyLabel" for="key">Key:</label>
+                        <input type="text" id="key" placeholder="e.g., 3 or keyword" class="input input-bordered input-accent w-full" />
+                        <small id="keyHint" style="display:block; margin-top:5px;"></small>
+                    </div>
+            
+                    <div id="key1-section" class="mb-5">
+                        <label for="key1">Key 1:</label>
+                        <input type="text" id="key1" placeholder="Enter first key" class="input input-bordered input-accent w-full ">
+                    </div>
+            
+                    <div id="key2-section" style="display: none;" class="mb-5">
+                        <label for="key2">Key 2:</label>
+                        <input type="text" id="key2" placeholder="Enter second key" class="input input-bordered input-accent w-full ">
+                    </div>
+            
+                    <div id="key3-section" style="display: none;" class="mb-5">
+                        <label for="key3">Key 3:</label>
+                        <input type="text" id="key3" placeholder="Enter third key" class="input input-bordered input-accent w-full ">
+                    </div>
+            
+                    <div id="uKeyCV" style="display: none;" class="mb-5">
+                        <label for="uKey">uKey:</label>
+                        <input type="text" id="uKey" placeholder="Enter integer key" class="input input-bordered input-accent w-full ">
+                    </div>
+            
+                    <!-- Plaintext Input -->
+                    <div class="cipher-option mb-5">
+                        <p class="mt-5">Plaintext:</p>
+                        <textarea id="message" placeholder="Enter your message here..." class="textarea textarea-info w-full "></textarea>
+                    </div>
+            
+                    <!-- Encrypt and Decrypt Buttons -->
+                    <div class="cipher-option mb-5">
+                        <button class="btn btn-success" onclick="encryptMessage()">Encrypt</button>
+                        <button class="btn btn-error" onclick="decryptMessage()">Decrypt</button>
+                    </div>
+            
+                    <!-- Output -->
+                    <div id="output" class="mt-5 border border-sky-500 rounded-lg textarea textarea-info">Output: <span id="ciphertext"></span></div>
+                </div>
+               
+              </div>
+            </div>
+          </div>    
+    </div>
+
+    <script src="cipher.js"></script>
+    <!-- <script src="rsaModify.js"></script> -->
+    <script>
+        // Toggle Key Input based on selected cipher
+        function toggleKeyInput() {
+            const cipher = document.getElementById('cipher').value;
+            const keyLabel = document.getElementById('keyLabel');
+            const keyInput = document.getElementById('key');
+            const keyHint = document.getElementById('keyHint');
+
+            const key1Section = document.getElementById('key1-section');
+            const key2Section = document.getElementById('key2-section');
+            const key3Section = document.getElementById('key3-section');
+            const uKey = document.getElementById('uKeyCV');
+
+
+            // Default settings
+            keyInput.style.display = 'block';
+            keyLabel.style.display = 'block';
+            keyLabel.textContent = "Key:";
+            keyHint.style.display = 'block';
+            key1Section.style.display = 'none';
+            uKey.style.display = 'none'
+
+            // Customize based on cipher type
+            switch (cipher) {
+                case 'caesar':
+                    keyLabel.textContent = "Key (Number):";
+                    keyInput.placeholder = "e.g., 3";
+                    keyHint.textContent = "Enter a number as the shift value.";
+                    key1Section.style.display='none'
+                    key2Section.style.display='none'
+                    key3Section.style.display='none'
+                    break;
+                case 'vigenere':
+                    keyLabel.textContent = "Key (Text):";
+                    keyInput.placeholder = "e.g., keyword";
+                    // keyHint.textContent = "Enter a word or phrase as the keyword.";
+                    break;
+                case 'atbash':
+                    keyInput.style.display = 'none';
+                    keyLabel.style.display = 'none';
+                    keyHint.style.display = 'none';
+                    break;
+                case 'playfair':
+                    keyLabel.textContent = "Key (Text): Enter a word or phrase as the keyword. Letters 'I' and 'J' are combined.";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "";
+                    break;
+                case 'railfence':
+                    keyLabel.textContent = "Key (Number): Enter the number of rails (rows) for the cipher.";
+                    keyInput.placeholder = "e.g., 3";
+                    keyHint.textContent = "";
+                    break;
+                case 'double-columnar':
+                    keyLabel.textContent = "Key (Text):Enter a word or phrase as the keyword for columnar transposition.";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "";
+                    break;
+
+                case 'triple-columnar':
+                    key1Section.style.display = 'block';
+                    key2Section.style.display = 'block';
+                    key3Section.style.display = 'block';
+                    keyInput.style.display = 'none';
+                    keyLabel.style.display='none';
+                    break;
+
+                case 'rsaModification':
+                    keyInput.style.display = 'none';
+                    keyLabel.style.display = 'none';
+                    keyHint.style.display = 'none';
+                    key1Section.style.display='none';
+                    key2Section.style.display='none';
+                    key3Section.style.display='none';
+                    break;
+
+                case 'AffineModification':
+
+                    break;
+
+                case 'modifiedceaser_veginere':
+                    keyLabel.textContent = "Key (Text):Enter a word or phrase as the keyword.";
+                    keyInput.placeholder = "e.g., keyword";
+                    keyHint.textContent = "";
+                    uKey.style.display = 'block';
+
+                    break;
+            }
+        }
+
+        // Initialize the page with the first cipher's key input settings
+        toggleKeyInput();
+    </script>
+</body>
+
+</html>

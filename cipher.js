@@ -1,6 +1,6 @@
 // cipher.js
 
-// Caesar Cipher Encryption and Decryption
+//========================================================== Caesar Cipher Encryption and Decryption================================
 function caesarCipher(text, shift, decrypt = false) {
     if (decrypt) shift = -shift;
     return text.replace(/[a-z]/gi, char => {
@@ -9,7 +9,7 @@ function caesarCipher(text, shift, decrypt = false) {
     });
 }
 
-// Vigenère Cipher Encryption and Decryption
+// ==========================================================Vigenère Cipher Encryption and Decryption================================
 function vigenereCipher(text, key, decrypt = false) {
     const keyUpper = key.toUpperCase();
     return text.replace(/[a-z]/gi, (char, index) => {
@@ -21,7 +21,7 @@ function vigenereCipher(text, key, decrypt = false) {
     });
 }
 
-// Atbash Cipher (same for encrypt and decrypt)
+// ==========================================Atbash Cipher (same for encrypt and decrypt)==================================
 function atbashCipher(text) {
     return text.replace(/[a-z]/gi, char => {
         const start = char <= 'Z' ? 65 : 97;
@@ -29,7 +29,7 @@ function atbashCipher(text) {
     });
 }
 
-// Main function to encrypt or decrypt based on user input
+//============================================= Main function to encrypt or decrypt based on user input======================
 function encryptMessage() {
     processMessage(false);
 }
@@ -38,7 +38,7 @@ function decryptMessage() {
     processMessage(true);
 }
 
-// Columnar Transposition Cipher Encryption
+// =======================================================Columnar Transposition Cipher Encryption====================================
 function columnarTranspositionEncrypt2(msg, key) {
     let cipher = "";
 
@@ -137,58 +137,77 @@ function columnarTranspositionCipher(message, key, decrypt = false) {
     }
 }
 
-// Columnar Transposition Cipher Encryption (Single)
+
+
+// =====================================================triple columner===================================================== 
+
 function columnarTranspositionEncrypt(msg, key) {
     let cipher = "";
-    let k_indx = 0;
     const msg_len = msg.length;
     const msg_lst = Array.from(msg);
-    const key_lst = Array.from(key).sort();
+    const key_lst = Array.from(key);
     const col = key.length;
     const row = Math.ceil(msg_len / col);
+    
+    // Fill with padding
     const fill_null = (row * col) - msg_len;
     for (let i = 0; i < fill_null; i++) {
         msg_lst.push('_');
     }
+
+    // Generate matrix
     const matrix = [];
     for (let i = 0; i < msg_lst.length; i += col) {
         matrix.push(msg_lst.slice(i, i + col));
     }
-    for (let _ = 0; _ < col; _++) {
-        const curr_idx = key.indexOf(key_lst[k_indx]);
+
+    // Sort key indexes
+    const key_indices = key_lst
+        .map((char, index) => ({char, index}))
+        .sort((a, b) => a.char.localeCompare(b.char))
+        .map(obj => obj.index);
+
+    // Read columns by sorted key index order
+    for (const idx of key_indices) {
         for (const row of matrix) {
-            cipher += row[curr_idx];
+            cipher += row[idx];
         }
-        k_indx++;
     }
+
     return cipher;
 }
+
 
 // Columnar Transposition Cipher Decryption (Single)
 function columnarTranspositionDecrypt(cipher, key) {
     let msg = "";
-    let k_indx = 0;
-    let msg_indx = 0;
     const msg_len = cipher.length;
-    const msg_lst = Array.from(cipher);
     const col = key.length;
     const row = Math.ceil(msg_len / col);
-    const key_lst = Array.from(key).sort();
-    const dec_cipher = [];
-    for (let i = 0; i < row; i++) {
-        dec_cipher.push(Array(col).fill(null));
-    }
-    for (let _ = 0; _ < col; _++) {
-        const curr_idx = key.indexOf(key_lst[k_indx]);
-        for (let j = 0; j < row; j++) {
-            dec_cipher[j][curr_idx] = msg_lst[msg_indx];
-            msg_indx++;
+    const cipher_lst = Array.from(cipher);
+    const key_lst = Array.from(key);
+
+    // Sort key indexes
+    const key_indices = key_lst
+        .map((char, index) => ({char, index}))
+        .sort((a, b) => a.char.localeCompare(b.char))
+        .map(obj => obj.index);
+
+    // Create a matrix to hold decrypted message
+    const dec_matrix = Array.from({ length: row }, () => Array(col).fill(null));
+
+    // Fill in decrypted matrix column-wise based on sorted key
+    let cipher_idx = 0;
+    for (const idx of key_indices) {
+        for (let r = 0; r < row; r++) {
+            dec_matrix[r][idx] = cipher_lst[cipher_idx];
+            cipher_idx++;
         }
-        k_indx++;
     }
-    msg = dec_cipher.flat().join('');
-    const null_count = (msg.match(/_/g) || []).length;
-    return null_count > 0 ? msg.slice(0, -null_count) : msg;
+
+    // Flatten and remove padding
+    msg = dec_matrix.flat().join('');
+    return msg.replace(/_+$/, '');
 }
 
 // Triple Columnar Transposition Cipher Encryption with Three Keys
@@ -219,7 +238,7 @@ function tripleColumnarTranspositionCipher(message, key1, key2, key3, decrypt = 
 }
 
 
-// Rail Fence Cipher Encryption and Decryption
+// ===========================================================Rail Fence Cipher ==================================================
 function railFenceCipher(text, key, decrypt = false) {
     if (decrypt) {
         const rail = Array.from({ length: key }, () => []);
@@ -249,6 +268,10 @@ function railFenceCipher(text, key, decrypt = false) {
         return rail.flat().join('');
     }
 }
+
+
+//============================================================== playfair===================================== 
+
 // Generate Playfair Key Matrix
 function generatePlayfairKeyMatrix(key) {
     const matrix = [];
@@ -269,7 +292,10 @@ function generatePlayfairKeyMatrix(key) {
     return matrix;
 }
 
-// Encrypt and Decrypt with Playfair Cipher
+
+
+
+
 function playfairCipher(text, key, decrypt = false) {
     const matrix = generatePlayfairKeyMatrix(key);
     const getPos = char => {
@@ -313,9 +339,10 @@ function playfairCipher(text, key, decrypt = false) {
 
     return result;
 }
+//  =========================================================playfairCipher End===================================================
 
 
-// rsa
+//=========================================================== rsa modification ================================================
 function gcd(a, b) {
     while (b !== 0n) {
         let temp = b;
@@ -426,8 +453,10 @@ function modificationRsa(message, decrypt = false) {
 
 }
 
+//============================================ RSa modification end =========================================================================
 
-// Affine Modification 
+
+// ===========================================Affine Modification  ===========================================================================
 
 console.log("");
 // Define character set
@@ -479,76 +508,113 @@ function modifiedAffine(message, decrypt = false) {
         return decryptModifiedAffine(message, a, b);
     }
 }
+// =======================================================modifiedAffine end ======================================================================
 
 
+//======================================================== modified ceaser and vegenere =========================================================
 
-// modified ceaser and vegenere 
-
-console.log("");
-// Define the Vigenère table with numbers and alphabets
-const vigenereTable = (() => {
-    const table = [];
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    
-    for (let i = 0; i < chars.length; i++) {
-        table[i] = [];
-        for (let j = 0; j < chars.length; j++) {
-            const index = (i + j) % chars.length;
-            table[i][j] = chars[index];
-        }
-    }
-    return table;
-})();
-
-// Helper function to get index in Vigenère table
-const getIndex = (char) => {
-    if (/[A-Z]/.test(char)) return char.charCodeAt(0) - 'A'.charCodeAt(0);
-    return 26 + parseInt(char, 10);  // Map digits 0-9 to indices 26-35
-};
-
-// Encryption function
-function encryptVigenereCaesar(plainText, key, uKey) {
-    console.log(uKey);
-            console.log(key);
-            console.log(plainText)
+//====================================================== Vigenère Caesar Combined =============================================
+function encryptVigenereCaesar(text, key, uKey) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const kLen = key.length;
     let cipherText = '';
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-    for (let i = 0; i < plainText.length; i++) {
-        const pIndex = getIndex(plainText[i]);
-        const kIndex = getIndex(key[i % key.length]);
-        let cIndex = (pIndex + kIndex + uKey) % chars.length;
-        
+    for (let i = 0; i < text.length; i++) {
+        const tIndex = chars.indexOf(text[i].toUpperCase());
+        const kIndex = chars.indexOf(key[i % kLen].toUpperCase());
+        const cIndex = (tIndex + kIndex + uKey) % chars.length;
         cipherText += chars[cIndex];
     }
+
     return cipherText;
 }
 
-// Decryption function
-function decryptVigenereCaesar(cipherText, key, uKey) {
+function decryptVigenereCaesar(text, key, uKey) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const kLen = key.length;
     let plainText = '';
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ';
 
-    for (let i = 0; i < cipherText.length; i++) {
-        const cIndex = getIndex(cipherText[i]);
-        const kIndex = getIndex(key[i % key.length]);
-        let pIndex = (cIndex - uKey - kIndex + chars.length) % chars.length;
-        
+    for (let i = 0; i < text.length; i++) {
+        const cIndex = chars.indexOf(text[i].toUpperCase());
+        const kIndex = chars.indexOf(key[i % kLen].toUpperCase());
+        const pIndex = (cIndex - kIndex - uKey + chars.length) % chars.length;
         plainText += chars[pIndex];
     }
+
     return plainText;
 }
 
-function combinedCeaserAndVeginer(message,key,uKey, decrypt = false) {
-    const emsg = encryptVigenereCaesar(message, key, uKey);
-    // console.log(key)
-    if (!decrypt) {
-        return encryptVigenereCaesar(message, key, uKey);
-    } else {
+function modifiedVigenereCaesar(message, key, uKey, decrypt = false) {
+    if (decrypt) {
         return decryptVigenereCaesar(message, key, uKey);
+    } else {
+        return encryptVigenereCaesar(message, key, uKey);
+    }
+}
+
+// combinedCeaserAndVeginer end =================================================================
+
+
+// modified autoKey =============================================================================
+
+// Function to encrypt the plaintext using the modified Auto Key Cipher
+function autoKeyEncrypt(plaintext, key) {
+    let ciphertext = '';
+    let extendedKey = key;
+
+    for (let i = 0; i < plaintext.length; i++) {
+        // Extend key with plaintext characters as needed
+        if (i >= key.length) {
+            extendedKey += plaintext[i - key.length];
+        }
+
+        // Get ASCII values of plaintext and keytext
+        const p = plaintext.charCodeAt(i);
+        const k = extendedKey.charCodeAt(i);
+
+        // Apply the modified encryption formula
+        const c = ((p + k) % 126) + 33;
+
+        // Convert to character and append to ciphertext
+        ciphertext += String.fromCharCode(c);
+    }
+
+    return ciphertext;
+}
+
+// Function to decrypt the ciphertext using the modified Auto Key Cipher
+function autoKeyDecrypt(ciphertext, key) {
+    let plaintext = '';
+    let extendedKey = key;
+
+    for (let i = 0; i < ciphertext.length; i++) {
+        // Get ASCII values of ciphertext and keytext
+        const c = ciphertext.charCodeAt(i);
+        const k = extendedKey.charCodeAt(i);
+
+        // Apply the modified decryption formula
+        const p = ((c - 33 - k + 126) % 126);
+
+        // Convert to character and append to plaintext
+        plaintext += String.fromCharCode(p);
+
+        // Extend key with decrypted character as needed
+        extendedKey += String.fromCharCode(p);
+    }
+
+    return plaintext;
+}
+
+function modifiedAutokey(message,key, decrypt = false) {
+    if (!decrypt) {
+        return autoKeyEncrypt(message, key);
+    } else {
+        return autoKeyDecrypt(message, key);
     }
 
 }
+
+// modified auto key end ===============================================================
 
 function processMessage(decrypt) {
     const cipher = document.getElementById('cipher').value;
@@ -557,7 +623,7 @@ function processMessage(decrypt) {
     const key2 = document.getElementById('key2').value;
     const key3 = document.getElementById('key3').value;
     const message = document.getElementById('message').value;
-    const uKey = document.getElementById('uKey').value;
+    const ukey = document.getElementById('uKey').value;
     let result = '';
 
     switch (cipher) {
@@ -595,9 +661,11 @@ function processMessage(decrypt) {
             break;
 
         case 'modifiedceaser_veginere':
-            result = combinedCeaserAndVeginer(message,key,uKey,decrypt)
+            result = modifiedVigenereCaesar(message,key,ukey,decrypt);
+            break;
 
-            
+        case 'Modified-AutoKey' :
+            result = modifiedAutokey(message,key,decrypt);
             break;
 
     }
