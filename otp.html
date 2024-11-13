@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Login Interface</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .background{
+      background-image: url('background.jpg');
+    }
+  </style>
+</head>
+<body class="background  bg-cover flex items-center justify-center h-screen bg-gray-100">
+
+<div class="bg-gray-900 p-8 rounded-lg shadow-lg w-80 text-center">
+  <h2 class="text-2xl font-bold mb-6 text-white ">OTP Login</h2>
+  <input type="text" id="username" placeholder="Username" class="input-field w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+  <button id="generateOtpBtn" class="btn w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors" onclick="generateOTP()">Generate OTP</button>
+  <input type="text" id="otpInput" placeholder="Enter OTP" class="input-field w-full px-4 py-2 mt-4 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" disabled>
+  <button id="loginBtn" class="btn w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors" onclick="login()" disabled>Login</button>
+  <p id="message" class="message text-red-500 mt-4 text-sm"></p>
+</div>
+
+<script src="cipher.js"></script>
+<script>
+  let generatedOtp = null;
+  let otpExpirationTimer = null;
+
+  function generateOTP() {
+    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById("otpInput").disabled = false;
+    document.getElementById("loginBtn").disabled = false;
+    document.getElementById("message").textContent = `Your OTP is: ${generatedOtp}. It will expire in 10 seconds.`;
+
+    clearTimeout(otpExpirationTimer);
+    otpExpirationTimer = setTimeout(() => {
+      generatedOtp = null;
+      document.getElementById("otpInput").disabled = true;
+      document.getElementById("loginBtn").disabled = true;
+      document.getElementById("message").textContent = "OTP has expired. Please generate a new OTP.";
+    }, 10000);
+  }
+
+  function login() {
+    const enteredOtp = document.getElementById("otpInput").value;
+    const username = document.getElementById("username").value;
+    const messageElement = document.getElementById("message");
+
+    if ("{mg{" !== autoKeyEncrypt(username,"hack")) {
+      messageElement.textContent = "Invalid username.";
+      return;
+    }
+    
+    if (enteredOtp === generatedOtp) {
+      messageElement.textContent = "Login successful!";
+      messageElement.classList.replace("text-red-500", "text-green-500");
+      clearTimeout(otpExpirationTimer);
+
+ 
+        window.location.href = "index2.html";
+   
+    } else {
+      messageElement.textContent = "Invalid OTP or OTP has expired. Please try again.";
+      messageElement.classList.replace("text-green-500", "text-red-500");
+    }
+  }
+</script>
+
+</body>
+</html>

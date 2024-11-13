@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "big-integer": "^1.6.52"
+    "big-integer": "^1.6.52",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
+    "twilio": "^5.3.5"
   }
 }
